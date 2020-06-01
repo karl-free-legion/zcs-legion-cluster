@@ -1,0 +1,22 @@
+{
+  "Start": "InitialState",
+  "States": {
+    "InitialState": {
+      "Type": "Task",
+      "Comment": "中城电子钱包充值",
+      "Group": "cardserver",
+      "Tag": "i/s/card/v1/jdRechargeApply",
+      "Next": "update"
+    },
+    "update": {
+      "Type": "Task",
+      "Comment": "简兑充值中城钱包申请",
+      "Group": "sdzw",
+      "Tag": "i/s/card/v1/jdRechargeApply",
+      "Next": "success"
+    },
+    "success": {
+      "Type": "Succeed"
+    }
+  }
+}

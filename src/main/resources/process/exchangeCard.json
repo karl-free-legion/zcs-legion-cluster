@@ -1,0 +1,22 @@
+{
+  "Start": "InitialState",
+  "States": {
+    "InitialState": {
+      "Type": "Task",
+      "Comment": "天津一卡通换卡-卡档",
+      "Group": "sdzw",
+      "Tag": "i/s/card/v1/exchangeCard",
+      "Next": "update"
+    },
+    "update": {
+      "Type": "Task",
+      "Comment": "天津一卡通换卡-卡文件",
+      "Group": "cardserver",
+      "Tag": "i/s/card/v1/exchangeCard",
+      "Next": "success"
+    },
+    "success": {
+      "Type": "Succeed"
+    }
+  }
+}

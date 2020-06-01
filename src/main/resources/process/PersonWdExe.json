@@ -1,0 +1,39 @@
+{
+  "Start": "InitialState",
+  "States": {
+    "InitialState": {
+      "Type": "Task",
+      "Comment": "个人提现执行-申请",
+      "Group": "pay",
+      "Tag": "i/s/withdraw/v1/personWdExecute",
+      "Next": "condition"
+    },
+    "condition": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "comment": "action == 000436_0300",
+          "Variable": "action",
+          "StringEquals": "000436_0300",
+          "Next": "condition_1"
+        },
+        {
+          "comment": "action != 000436_0300",
+          "Variable": "action",
+          "StringNotEquals": "000436_0300",
+          "Next": "success"
+        }
+      ]
+    },
+    "condition_1": {
+      "Type": "Task",
+      "Comment": "充值",
+      "Group": "sdzw",
+      "Tag": "i/s/withdraw/v1/personWdExecute/back",
+      "Next": "success"
+    },
+    "success": {
+      "Type": "Succeed"
+    }
+  }
+}

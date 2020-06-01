@@ -1,0 +1,50 @@
+num: 2
+
+spring:
+  application:
+    name: legion-cluster
+server:
+  port: 900${num}
+
+# server
+legion:
+  server:
+    host: 127.0.0.1
+    port: 1800${num}
+    detector:
+      intervalInMillis: 1000
+      phiConvictThreshold: 8
+  cluster:
+    - host: 127.0.0.1
+      port: 18001
+
+logging:
+  path: logs
+  file: legion-cluster
+  level:
+    org.springframework: warn
+    org.springframework.boot.web.embedded.tomcat: info
+    com.legion.net.entities.TraceLogSender: info
+    org.apache.kafka: error
+    io.netty: info
+    com.legion: warn
+    org.hibernate: warn
+    reactor.netty: info
+    org.synchronoss: info
+
+# management
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  endpoints:
+    web:
+      base-path: /exporter
+      exposure:
+        include: prometheus
+    jmx:
+      exposure:
+        exclude: '*'
+  server:
+    port: 1${server.port}

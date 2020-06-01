@@ -1,0 +1,22 @@
+{
+  "Start": "InitialState",
+  "States": {
+    "InitialState": {
+      "Type": "Task",
+      "Comment": "脱机交易上送",
+      "Group": "cardserver",
+      "Tag": "i/s/auth/v1/offlineTradeCommit/ly",
+      "Next": "update"
+    },
+    "update": {
+      "Type": "Task",
+      "Comment": "脱机交易上送",
+      "Group": "pay",
+      "Tag": "i/s/auth/v1/offlineTradeCommit/ly",
+      "Next": "success"
+    },
+    "success": {
+      "Type": "Succeed"
+    }
+  }
+}

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Title</title>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-6">
+            <table class="table table-bordered table-striped table-sm">
+                <thead>
+                <tr class="table-primary">
+                    <th scope="col">SelfNode</th>
+                    <th scope="col">值</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="table-success">ID</td>
+                    <td><span th:text="${selfInfo.nodeId}"></span></td>
+                </tr>
+                <tr>
+                    <td class="table-success">本节点地址</td>
+                    <td><span th:text="${selfInfo.netInfo}"></span></td>
+                </tr>
+                <tr>
+                    <td class="table-success">seedNum</td>
+                    <td><span th:text="${selfInfo.seedNum}"></span></td>
+                </tr>
+                <tr>
+                    <td class="table-success">TokeSize</td>
+                    <td><span th:text="${selfInfo.tokenObjList.size()}"></span></td>
+                </tr>
+                <tr>
+                    <td class="table-success">JoinTime</td>
+                    <td><span th:text="${#dates.format(selfInfo.joinTimeMillis, 'yyyy-MM-dd HH:mm:ss')}"></span></td>
+                </tr>
+                <tr>
+                    <td class="table-success">dmlTime</td>
+                    <td><span th:text="${#dates.format(selfInfo.updateTimestamp, 'yyyy-MM-dd HH:mm:ss')}"></span></td>
+                </tr>
+                <tr>
+                    <td class="table-success">isAlive</td>
+                    <td><span th:text="${selfInfo.alive}"></span></td>
+                </tr>
+                <tr>
+                    <td class="table-success">hbState</td>
+                    <td>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                Generation = <span th:text="${selfInfo.hbState.generation}"></span>
+                            </li>
+                            <li class="list-group-item">
+                                version = <span th:text="${selfInfo.hbState.heartBeatVersion}"></span>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table-success">applicationState</td>
+                    <td>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item" th:each="instance : ${selfInfo.applicationState.get()}">
+                                <span th:text="${instance.key}"></span> =
+                                <span th:text="${instance.value}"></span>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table-success">ModuleGroupState</td>
+                    <td>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item" th:each="instance : ${selfInfo.legionModuleGroupState}">
+                                <span th:text="${instance.key}"></span> =
+                                <span th:text="${instance.value}"></span>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item list-group-item-primary">ChannelGroup(<span th:text="${groups.size()}"></span>)</li>
+                <li class="list-group-item" th:each="group : ${groups}"><span th:text="${group}"></span></li>
+            </ul>
+
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item list-group-item-primary">MetaData(<span th:text="${metas.size()}"></span>)</li>
+                <li class="list-group-item" th:each="meta : ${metas}"><span th:text="${meta}"></span></li>
+            </ul>
+        </div>
+        <div class="col-6">
+            <table class="table table-bordered table-striped table-sm" th:each="cluster : ${clusters}">
+                <thead>
+                <tr class="table-primary">
+                    <th scope="col">ClusterNode</th>
+                    <th scope="col">值</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="table-success">本节点地址</td>
+                    <td><span th:text="${cluster.netInfo}"></span></td>
+                </tr>
+                <tr>
+                    <td class="table-success">ID</td>
+                    <td><span th:text="${cluster.nodeId}"></span></td>
+                </tr>
+                <tr>
+                    <td class="table-success">seedNum</td>
+                    <td><span th:text="${cluster.seedNum}"></span></td>
+                </tr>
+                <tr>
+                    <td class="table-success">TokeSize</td>
+                    <td><span th:text="${cluster.tokenObjList.size()}"></span></td>
+                </tr>
+                <tr>
+                    <td class="table-success">JoinTime</td>
+                    <td><span th:text="${#dates.format(cluster.joinTimeMillis, 'yyyy-MM-dd HH:mm:ss')}"></span></td>
+                </tr>
+                <tr>
+                    <td class="table-success">dmlTime</td>
+                    <td><span th:text="${#dates.format(cluster.updateTimestamp, 'yyyy-MM-dd HH:mm:ss')}"></span></td>
+                </tr>
+                <tr>
+                    <td class="table-success">isAlive</td>
+                    <td><span th:text="${cluster.alive}"></span></td>
+                </tr>
+                <tr>
+                    <td class="table-success">hbState</td>
+                    <td>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                Generation = <span th:text="${cluster.hbState.generation}"></span>
+                            </li>
+                            <li class="list-group-item">
+                                version = <span th:text="${cluster.hbState.heartBeatVersion}"></span>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table-success">applicationState</td>
+                    <td>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item" th:each="instance : ${cluster.applicationState.get()}">
+                                <span th:text="${instance.key}"></span> =
+                                <span th:text="${instance.value}"></span>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table-success">ModuleGroupState</td>
+                    <td>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item" th:each="instance : ${cluster.legionModuleGroupState}">
+                                <span th:text="${instance.key}"></span> =
+                                <span th:text="${instance.value}"></span>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+{
+  "Start": "InitialState",
+  "States": {
+    "InitialState": {
+      "Type": "Task",
+      "Comment": "查询",
+      "Group": "sample",
+      "Tag": "query",
+      "Next": "List"
+    },
+    "List": {
+      "Type": "Task",
+      "Comment": "列表",
+      "Group": "sample",
+      "Tag": "list",
+      "Next": "condition"
+    },
+    "condition": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "comment": "name == Green",
+          "Variable": "name",
+          "StringEquals": "Green",
+          "Next": "condition_1"
+        },
+        {
+          "comment": "age > 18",
+          "Variable": "age",
+          "NumericGreaterThan": 18,
+          "Next": "condition_2"
+        }
+      ]
+    },
+    "condition_1": {
+      "Type": "Task",
+      "Comment": "更新",
+      "Group": "sample",
+      "Tag": "update",
+      "Next": "delete"
+    },
+    "condition_2": {
+      "Type": "Task",
+      "Comment": "删除",
+      "Group": "sample",
+      "Tag": "delete",
+      "Next": "success"
+    },
+    "delete": {
+      "Type": "Task",
+      "Comment": "多节点删除",
+      "Group": "sample",
+      "Tag": "delete",
+      "Next": "success"
+    },
+    "success": {
+      "Type": "Succeed"
+    }
+  }
+}

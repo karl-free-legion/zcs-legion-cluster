@@ -1,0 +1,53 @@
+{
+  "Start": "InitialState",
+  "States": {
+    "InitialState": {
+      "Type": "Task",
+      "Comment": "银行卡申购虚拟卡(支付确认)",
+      "Group": "pay",
+      "Tag": "i/s/card/v1/bpfCard",
+      "Next": "card"
+    },
+    "card": {
+      "Type": "Task",
+      "Comment": "银行卡申购虚拟卡-成功确认",
+      "Group": "sdzw",
+      "Tag": "i/s/card/v1/bpfCard",
+      "Next": "condition"
+    },
+    "condition": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "comment": "action == 521000_0210",
+          "Variable": "action",
+          "StringEquals": "521000_0210",
+          "Next": "condition_1"
+        },
+        {
+          "comment": "action == 521000_0300",
+          "Variable": "action",
+          "StringEquals": "521000_0300",
+          "Next": "condition_2"
+        }
+      ]
+    },
+    "condition_1": {
+      "Type": "Task",
+      "Comment": "银行卡申购成功",
+      "Group": "pay",
+      "Tag": "i/s/card/v1/bpfCard/suc",
+      "Next": "success"
+    },
+    "condition_2": {
+      "Type": "Task",
+      "Comment": "银行卡申购失败执行银行卡退款",
+      "Group": "pay",
+      "Tag": "i/s/card/v1/bpfCard/refund",
+      "Next": "success"
+    },
+    "success": {
+      "Type": "Succeed"
+    }
+  }
+}

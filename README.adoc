@@ -1,0 +1,28 @@
+= Legion 集群管理
+Doc Writer <zing>
+v1.0, 2019-07-04
+:toc: left
+
+== 概述
+本项目用于Legion组合Legion集群，监控集群状态
+
+== 使用方式
+1. Legion Server引用Jar
+2. 配置
+
+[[legion-config]]
+[source, yaml]
+.application.yml
+----
+legion:
+  server:
+    host: 127.0.0.1
+    port: 1800${num}
+    detector:
+      intervalInMillis: 1000
+      phiConvictThreshold: 8
+  cluster:
+    - host: 127.0.0.1
+      port: 18001
+
+----

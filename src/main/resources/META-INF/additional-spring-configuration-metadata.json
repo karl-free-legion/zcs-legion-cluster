@@ -1,0 +1,11 @@
+{
+  "groups": [
+    {
+      "name": "legion",
+      "type": "com.legion.net.common.config.LegionProperties",
+      "sourceType": "com.legion.net.common.config.LegionProperties"
+    }
+  ],
+  "properties": [
+  ]
+}

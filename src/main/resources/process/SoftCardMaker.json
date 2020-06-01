@@ -1,0 +1,29 @@
+{
+  "Start": "InitialState",
+  "States": {
+    "InitialState": {
+      "Type": "Task",
+      "Comment": "软卡生成",
+      "Group": "sdzw",
+      "Tag": "i/s/card/v1/softCardMaker",
+      "Next": "operate"
+    },
+    "operate": {
+      "Type": "Task",
+      "Comment": "制住建部标准的软卡",
+      "Group": "cardserver",
+      "Tag": "i/s/card/v1/softCardMaker",
+      "Next": "update"
+    },
+    "update": {
+      "Type": "Task",
+      "Comment": "软卡生成请求实体类",
+      "Group": "pay",
+      "Tag": "i/s/card/v1/softCardMaker",
+      "Next": "success"
+    },
+    "success": {
+      "Type": "Succeed"
+    }
+  }
+}

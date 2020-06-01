@@ -1,0 +1,46 @@
+{
+  "Start": "InitialState",
+  "States": {
+    "InitialState": {
+      "Type": "Task",
+      "Comment": "查询超时交易订单状态",
+      "Group": "pay",
+      "Tag": "i/s/recharge/v1/queryBandTradeSta",
+      "Next": "condition"
+    },
+    "condition": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "comment": "action == 000201_0300",
+          "Variable": "action",
+          "StringEquals": "000201_0300",
+          "Next": "condition_1"
+        },
+        {
+          "comment": "action == 000201_0200",
+          "Variable": "action",
+          "StringEquals": "000201_0200",
+          "Next": "success"
+        }
+      ]
+    },
+    "condition_1": {
+      "Type": "Task",
+      "Comment": "充值",
+      "Group": "sdzw",
+      "Tag": "i/s/recharge/v1/queryBandTradeSta",
+      "Next": "update"
+    },
+    "update": {
+      "Type": "Task",
+      "Comment": "更新",
+      "Group": "pay",
+      "Tag": "i/s/recharge/v1/queryBandTradeSta/update",
+      "Next": "success"
+    },
+    "success": {
+      "Type": "Succeed"
+    }
+  }
+}

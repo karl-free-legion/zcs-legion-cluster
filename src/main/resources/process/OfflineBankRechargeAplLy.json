@@ -1,0 +1,22 @@
+{
+  "Start": "InitialState",
+  "States": {
+    "InitialState": {
+      "Type": "Task",
+      "Comment": "辽源-银行卡充值电子钱包申请",
+      "Group": "cardserver",
+      "Tag": "i/s/recharge/v1/bankRechOffwalletApl/ly",
+      "Next": "operate"
+    },
+    "operate": {
+      "Type": "Task",
+      "Comment": "辽源-银行卡充值电子钱包申请",
+      "Group": "pay",
+      "Tag": "i/s/recharge/v1/bankRechOffwalletApl/ly",
+      "Next": "success"
+    },
+    "success": {
+      "Type": "Succeed"
+    }
+  }
+}

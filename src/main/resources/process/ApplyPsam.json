@@ -1,0 +1,29 @@
+{
+  "Start": "InitialState",
+  "States": {
+    "InitialState": {
+      "Type": "Task",
+      "Comment": "申请PSAM卡",
+      "Group": "sdzw",
+      "Tag": "i/s/card/v1/applyPsamCard",
+      "Next": "update"
+    },
+    "update": {
+      "Type": "Task",
+      "Comment": "申请卡",
+      "Group": "cardserver",
+      "Tag": "i/s/card/v1/applyPsamCard",
+      "Next": "delete"
+    },
+    "delete": {
+      "Type": "Task",
+      "Comment": "产生密钥",
+      "Group": "pay",
+      "Tag": "i/s/card/v1/applyPsamCard",
+      "Next": "success"
+    },
+    "success": {
+      "Type": "Succeed"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "Start": "InitialState",
+  "States": {
+    "InitialState": {
+      "Type": "Task",
+      "Comment": "商户无密提现申请",
+      "Group": "sdzw",
+      "Tag": "i/s/withdraw/v1/wdApply",
+      "Next": "update"
+    },
+    "update": {
+      "Type": "Task",
+      "Comment": "商户提现申请",
+      "Group": "pay",
+      "Tag": "i/s/withdraw/v1/wdApply",
+      "Next": "success"
+    },
+    "success": {
+      "Type": "Succeed"
+    }
+  }
+}

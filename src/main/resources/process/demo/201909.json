@@ -1,0 +1,29 @@
+{
+  "Start": "InitialState",
+  "States": {
+    "InitialState": {
+      "Type": "Task",
+      "Comment": "第一步",
+      "Group": "201909",
+      "Tag": "query",
+      "Next": "one"
+    },
+    "two": {
+      "Type": "Task",
+      "Comment": "第二步",
+      "Group": "201909",
+      "Tag": "list",
+      "Next": "success"
+    },
+    "one": {
+      "Type": "Task",
+      "Comment": "第二步",
+      "Group": "201909",
+      "Tag": "update",
+      "Next": "two"
+    },
+    "success": {
+      "Type": "Succeed"
+    }
+  }
+}

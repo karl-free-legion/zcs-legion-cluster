@@ -1,0 +1,63 @@
+{
+  "Start": "InitialState",
+  "States": {
+    "InitialState": {
+      "Type": "Task",
+      "Comment": "银行卡消费超时查询",
+      "Group": "pay",
+      "Tag": "i/s/query/v1/bankOrderQry",
+      "Next": "condition"
+    },
+    "condition": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "comment": "action != 000441_0200",
+          "Variable": "action",
+          "StringNotEquals": "000441_0200",
+          "Next": "condition_1"
+        },
+        {
+          "comment": "action == 000441_0200",
+          "Variable": "action",
+          "StringEquals": "000441_0200",
+          "Next": "success"
+        }
+      ]
+    },
+    "condition_1": {
+      "Type": "Task",
+      "Comment": "交易同步",
+      "Group": "sdzw",
+      "Tag": "i/s/pay/v1/bankPayCheck",
+      "Next": "condition_2"
+    },
+    "condition_2": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "comment": "code == 0000",
+          "Variable": "code",
+          "StringEquals": "0000",
+          "Next": "success"
+        },
+        {
+          "comment": "code != 0000",
+          "Variable": "code",
+          "StringNotEquals": "0000",
+          "Next": "update"
+        }
+      ]
+    },
+    "update": {
+      "Type": "Task",
+      "Comment": "更新同步失败交易",
+      "Group": "pay",
+      "Tag": "i/s/pay/v1/bankPayCheck/fail",
+      "Next": "success"
+    },
+    "success": {
+      "Type": "Succeed"
+    }
+  }
+}

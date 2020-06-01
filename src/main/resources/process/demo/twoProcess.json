@@ -1,0 +1,22 @@
+{
+  "Start": "InitialState",
+  "States": {
+    "InitialState": {
+      "Type": "Task",
+      "Comment": "第一步",
+      "Group": "g000",
+      "Tag": "query",
+      "Next": "one"
+    },
+    "one": {
+      "Type": "Task",
+      "Comment": "第二步",
+      "Group": "g001",
+      "Tag": "update",
+      "Next": "success"
+    },
+    "success": {
+      "Type": "Succeed"
+    }
+  }
+}

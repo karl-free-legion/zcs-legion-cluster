@@ -1,0 +1,38 @@
+{
+  "Start": "InitialState",
+  "States": {
+    "InitialState": {
+      "Type": "Task",
+      "Comment": "查询",
+      "Group": "g000",
+      "Tag": "query",
+      "Next": "one"
+    },
+
+    "one": {
+      "Type": "Task",
+      "Comment": "更新",
+      "Group": "g001",
+      "Tag": "update",
+      "Next": "two"
+    },
+    "two": {
+      "Type": "Task",
+      "Comment": "删除",
+      "Group": "g001",
+      "Tag": "delete",
+      "Next": "three"
+    },
+    "three": {
+      "Type": "Task",
+      "Comment": "删除",
+      "Group": "g000",
+      "Tag": "list",
+      "Next": "success"
+    },
+
+    "success": {
+      "Type": "Succeed"
+    }
+  }
+}
