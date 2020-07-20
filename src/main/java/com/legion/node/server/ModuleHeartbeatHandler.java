@@ -58,6 +58,10 @@ public class ModuleHeartbeatHandler {
                 rpl.setBody(Any.pack(rplBody).toByteString());
                 log.info("module apply join>>>groupId:{}", req.getGroupId());
             }
+            if(StringUtils.isNotBlank(req.getHttpAddress())) {
+                LegionNodeContext.context().addModuleGroupHttpInfo(req.getGroupId(), req.getModuleId(), req.getHttpAddress());
+                //TODO 同步HTTP信息
+            }
         } catch (InvalidProtocolBufferException e) {
             throw new LegionNetException("-501", "message transfer failed", e);
         }

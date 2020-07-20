@@ -89,12 +89,15 @@
             </table>
 
             <ul class="list-group list-group-flush">
-                <li class="list-group-item list-group-item-primary">ChannelGroup(<span th:text="${groups.size()}"></span>)</li>
+                <li class="list-group-item list-group-item-primary">ChannelGroup(<span
+                        th:text="${groups.size()}"></span>)
+                </li>
                 <li class="list-group-item" th:each="group : ${groups}"><span th:text="${group}"></span></li>
             </ul>
 
             <ul class="list-group list-group-flush">
-                <li class="list-group-item list-group-item-primary">MetaData(<span th:text="${metas.size()}"></span>)</li>
+                <li class="list-group-item list-group-item-primary">MetaData(<span th:text="${metas.size()}"></span>)
+                </li>
                 <li class="list-group-item" th:each="meta : ${metas}"><span th:text="${meta}"></span></li>
             </ul>
         </div>
@@ -164,6 +167,17 @@
                     <td>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item" th:each="instance : ${cluster.legionModuleGroupState}">
+                                <span th:text="${instance.key}"></span> =
+                                <span th:text="${instance.value}"></span>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table-success">ModuleGroupRoute</td>
+                    <td>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item" th:each="instance : ${cluster.legionGroupModuleHttp}">
                                 <span th:text="${instance.key}"></span> =
                                 <span th:text="${instance.value}"></span>
                             </li>
