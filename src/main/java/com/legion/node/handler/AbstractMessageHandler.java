@@ -42,7 +42,6 @@ public abstract class AbstractMessageHandler implements NodeMessageProcess {
 
     /**
      * 流程回复消息的Forward
-     * //TODO 待优化
      *
      * @param message
      * @param nodeId
@@ -71,13 +70,13 @@ public abstract class AbstractMessageHandler implements NodeMessageProcess {
         LegionChannelGroup channelGroup = context.getChannelGroup();
         LegionNodeInfo selfInfo = context.getSelfInfo();
 
-        //FIXME 修复module无法负载的问题
+        //修复module无法负载的问题
         List<Object> sendTarget = new ArrayList<>();
         List<Channel> availableChannel = channelGroup.getOneRow(groupId).stream().filter(channel -> channel != null).collect(Collectors.toList());
         sendTarget.addAll(availableChannel);
         if (!message.getHeader().hasNodeSource()) {
-            //FIXME 修复legion转发时, 排除自己
-            //FIXME 修复重复跳转的问题，有NodeSource证明是Forward过来的，本节点一定有对应的Module的连接，如果没有让客户端重试
+            //修复legion转发时, 排除自己
+            //修复重复跳转的问题，有NodeSource证明是Forward过来的，本节点一定有对应的Module的连接，如果没有让客户端重试
             List<LegionNodeInfo> availableNode = context.getClusterNodes()
                     .values()
                     .stream()

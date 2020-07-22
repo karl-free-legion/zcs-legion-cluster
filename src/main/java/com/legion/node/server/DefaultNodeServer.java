@@ -26,7 +26,8 @@ public class DefaultNodeServer extends AbstractNodeServer {
                 new GossipMessageHandler(legionBeanHelper),
                 new ProcessSendMessageHandler(),
                 new ProcessRplMessageHandler(),
-                new ModuleHBMessageHandler()
+                new ModuleHBMessageHandler(),
+                new RequireModuleHttpInfoHandler()
         };
     }
 

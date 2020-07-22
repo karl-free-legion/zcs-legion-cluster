@@ -17,6 +17,9 @@ import io.netty.util.concurrent.Promise;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -39,7 +42,7 @@ public class RequireModuleHttpInfoHandler extends AbstractMessageHandler {
             result = httpRouteReq.isPresent();
             httpRouteReq.ifPresent(m -> handleRouteReq(m, message, channelHandlerContext.channel()));
         } catch (Throwable e) {
-            log.error("module hb message handler failed. {}", message.getHeader(), e);
+            log.error("module ACQUIRE ROUTE message handler failed. {}", message.getHeader(), e);
         }
         return result;
     }
@@ -66,25 +69,27 @@ public class RequireModuleHttpInfoHandler extends AbstractMessageHandler {
 
         //路由信息组装
         LegionNodeContext.context().getClusterNodes().values().stream()
-                .filter(ln ->
-                        LegionGlobalConstant.ACQUIRE_ALL_HTTP_ROUTE.equals(targetGroupId)
-                                || ln.matchGroup(targetGroupId))
                 .map(ln -> {
-                    HttpRoute.GroupCluster.Builder groupCluster = HttpRoute.GroupCluster.newBuilder();
+                    List<HttpRoute.GroupCluster.Builder> groupClusters = new ArrayList<>();
                     ln.getLegionGroupModuleHttp().entrySet().stream().filter(e ->
-                            GossipUtils.matchGroup(e.getKey(), targetGroupId)
+                            (LegionGlobalConstant.ACQUIRE_ALL_HTTP_ROUTE.equals(targetGroupId)
+                                    || GossipUtils.matchGroup(e.getKey(), targetGroupId))
                     ).forEach(e -> {
-                                HttpRoute.ModuleInfo.Builder moduleInfo = HttpRoute.ModuleInfo.newBuilder();
-                                final String[] temp = GossipUtils.deSerializeGroupModule(e.getKey());
-                                if (temp != null && temp.length > 1) {
-                                    moduleInfo.setModuleId(temp[1]);
-                                    moduleInfo.setHttpInfo(e.getValue());
-                                    groupCluster.addModuleInfo(moduleInfo);
-                                }
-                            }
+                        HttpRoute.GroupCluster.Builder groupCluster = HttpRoute.GroupCluster.newBuilder();
+                        HttpRoute.ModuleInfo.Builder moduleInfo = HttpRoute.ModuleInfo.newBuilder();
+                        final String[] temp = GossipUtils.deSerializeGroupModule(e.getKey());
+                        if (temp != null && temp.length > 1) {
+                            moduleInfo.setModuleId(temp[1]);
+                            moduleInfo.setHttpInfo(e.getValue());
+                            groupCluster.addModuleInfo(moduleInfo);
+                            groupCluster.setGroupId(temp[0]);
+                        }
+                        groupClusters.add(groupCluster);
+                    }
                     );
-                    return groupCluster;
+                    return groupClusters;
                 })
+                .flatMap(Collection::stream)
                 .filter(CommonUtils.distinctByKey(t -> t.getGroupId()))
                 .forEach(rplBody::addGroupInfo);
 
