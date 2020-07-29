@@ -5,10 +5,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * create by zing from zcsmart.com
+ * create by zing
  *
- * @author zing
- * @version 0.0.1
+ * @author karl
  */
 @Slf4j
 @SpringBootApplication

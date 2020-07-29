@@ -96,6 +96,17 @@
                         </ul>
                     </td>
                 </tr>
+                <tr>
+                    <td class="table-success">ModuleGroupVersion</td>
+                    <td>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item" th:each="instance : ${selfInfo.legionGroupModuleVersion}">
+                                <span th:text="${instance.key}"></span> =
+                                <span th:text="${instance.value}"></span>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
                 </tbody>
             </table>
 
@@ -189,6 +200,17 @@
                     <td>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item" th:each="instance : ${cluster.legionGroupModuleHttp}">
+                                <span th:text="${instance.key}"></span> =
+                                <span th:text="${instance.value}"></span>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table-success">ModuleGroupVersion</td>
+                    <td>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item" th:each="instance : ${cluster.legionGroupModuleVersion}">
                                 <span th:text="${instance.key}"></span> =
                                 <span th:text="${instance.value}"></span>
                             </li>

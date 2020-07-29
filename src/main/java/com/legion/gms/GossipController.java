@@ -208,11 +208,11 @@ public class GossipController {
         localNode.setSeedNum(remoteNodePB.getSeedNum());
         Map<String, Long> remoteServiceStates = remoteNodePB.getServiceStateMapMap();
         Map<String, Long> remoteModuleGroupStates = remoteNodePB.getLegionModuleGroupStateMap();
-//        assert remoteNodePB.getGeneration() == localNode.getHbState().getGeneration();
         localNode.updateServiceStates(remoteServiceStates.entrySet());
         localNode.updateModuleGroupStates(remoteModuleGroupStates);
         //TODO 同步remoteAdditions信息
         localNode.overWriteAllModuleHttpAddress(remoteNodePB.getLegionModuleGroupHttpMap());
+        localNode.overWriteAllModuleHttpVersion(remoteNodePB.getLegionModuleGroupRouteVersionMap());
     }
 
     public long getFirstSynSendAt() {

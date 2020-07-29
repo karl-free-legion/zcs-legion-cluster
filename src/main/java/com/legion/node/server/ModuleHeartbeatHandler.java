@@ -7,7 +7,6 @@ import com.legion.core.api.X;
 import com.legion.net.common.exceptions.LegionNetException;
 import com.legion.net.common.util.FunctionUtils;
 import com.legion.net.entities.ApplicationState;
-import com.legion.net.entities.LegionChannelGroup;
 import com.legion.net.entities.LegionNodeContext;
 import com.legion.net.entities.LegionNodeInfo;
 import io.netty.channel.Channel;
@@ -52,6 +51,7 @@ public class ModuleHeartbeatHandler {
                 if (StringUtils.isNotBlank(req.getGroupId()) && StringUtils.isNotBlank(req.getModuleId())) {
                     LegionNodeContext.context().moduleGroupAdd(req.getGroupId(), req.getModuleId());
                     LegionNodeContext.context().addModuleGroupHttpInfo(req.getGroupId(), req.getModuleId(), req.getHttpAddress());
+                    LegionNodeContext.context().addModuleGroupRouteVersion(req.getGroupId(), req.getModuleId(), req.getRouteVersion());
                     LegionNodeContext.context().getChannelGroup().putGroupModuleChannel(req.getGroupId(), req.getModuleId(), channel);
                 }
             } else {
@@ -69,7 +69,6 @@ public class ModuleHeartbeatHandler {
     private boolean theModuleNotRegistered(Modulehb.ModuleReq req) {
         String groupId = req.getGroupId();
         String moduleId = req.getModuleId();
-        LegionChannelGroup l = LegionNodeContext.context().getChannelGroup();
         return !LegionNodeContext.context().getSelfInfo().matchGroupModule(groupId, moduleId);
 
     }

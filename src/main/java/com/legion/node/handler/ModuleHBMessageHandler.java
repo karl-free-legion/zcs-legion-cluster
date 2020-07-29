@@ -20,10 +20,7 @@ public class ModuleHBMessageHandler extends AbstractMessageHandler {
 
     @Override
     public boolean preHandler(X.XMessage message, ChannelHandlerContext channelHandlerContext) {
-        if (message.getHeader().getMsgType().equals(X.XMessageType.HEARTBEAT)) {
-            return true;
-        }
-        return false;
+        return message.getHeader().getMsgType().equals(X.XMessageType.HEARTBEAT);
     }
 
     @Override
@@ -37,8 +34,6 @@ public class ModuleHBMessageHandler extends AbstractMessageHandler {
         }
         return result;
     }
-
-    ;
 
     /**
      * module注册legion后, 需要处理业务
