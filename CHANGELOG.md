@@ -1,3 +1,11 @@
+## 2.6.20 (2020-8-7)
+
+Features:
+   - 修改gossip里的moduleInfo为对象，便于后续module信息扩展
+   - X.message里添加routeversion信息用于后续灰度
+   - simpleMessage的发送逻辑里加入根据ruoteVersion进行分流（灰度发布）
+   
+   
 ## 2.6.19 (2020-7-29)
 
 Features:

@@ -49,9 +49,7 @@ public class ModuleHeartbeatHandler {
                 Modulehb.HBMessage rplBody = mi.toBuilder().setLegionResp(newModuleJoinClusterResponse(req)).build();
                 rpl.setBody(Any.pack(rplBody).toByteString());
                 if (StringUtils.isNotBlank(req.getGroupId()) && StringUtils.isNotBlank(req.getModuleId())) {
-                    LegionNodeContext.context().moduleGroupAdd(req.getGroupId(), req.getModuleId());
-                    LegionNodeContext.context().addModuleGroupHttpInfo(req.getGroupId(), req.getModuleId(), req.getHttpAddress());
-                    LegionNodeContext.context().addModuleGroupRouteVersion(req.getGroupId(), req.getModuleId(), req.getRouteVersion());
+                    LegionNodeContext.context().moduleGroupAdd(req);
                     LegionNodeContext.context().getChannelGroup().putGroupModuleChannel(req.getGroupId(), req.getModuleId(), channel);
                 }
             } else {

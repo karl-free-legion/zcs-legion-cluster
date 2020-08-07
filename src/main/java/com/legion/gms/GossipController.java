@@ -49,15 +49,15 @@ public class GossipController {
     /**
      * Maximimum difference between generation value and local time we are willing to accept about a peer
      */
-    static final long MAX_GENERATION_DIFFERENCE = 86400 * 365 * 1000 * 1000 * 1000;
+    private static final long MAX_GENERATION_DIFFERENCE = 86400 * 365 * 1000 * 1000 * 1000;
 
-    volatile long firstSynSendAt = 0L;
+    private volatile long firstSynSendAt = 0L;
 
 
     /**
      * Remove node re join delay(ms)
      */
-    public final static int REJOIN_DELAY = 2 * 60 * 1000;
+    private final static int REJOIN_DELAY = 2 * 60 * 1000;
 
 
     private ScheduledThreadPoolExecutor scheduled = new ScheduledThreadPoolExecutor(1);
@@ -143,12 +143,12 @@ public class GossipController {
     /**
      * 根据Gossip消息同步本地节点
      *
-     * @param nodeInfos
+     * @param nodeIfs
      * @throws LegionNetException
      */
-    public void applyStateLocally(List<Gossip.NodeInfo> nodeInfos) throws LegionNetException {
+    public void applyStateLocally(List<Gossip.NodeInfo> nodeIfs) throws LegionNetException {
         LegionNodeContext context = LegionNodeContext.context();
-        for (Gossip.NodeInfo remoteNodePB : nodeInfos) {
+        for (Gossip.NodeInfo remoteNodePB : nodeIfs) {
             try {
                 InetAddressAndPort remoteNetInfo = InetAddressAndPort.getByNameAndPort(remoteNodePB.getAddress(), remoteNodePB.getPort());
                 if (justRemovedLegionNode.containsKey(remoteNetInfo)) {
@@ -207,19 +207,12 @@ public class GossipController {
 
         localNode.setSeedNum(remoteNodePB.getSeedNum());
         Map<String, Long> remoteServiceStates = remoteNodePB.getServiceStateMapMap();
-        Map<String, Long> remoteModuleGroupStates = remoteNodePB.getLegionModuleGroupStateMap();
+        Map<String, Gossip.ModuleInfo> remoteModuleGroupStates = remoteNodePB.getLegionModuleGroupStateMap();
         localNode.updateServiceStates(remoteServiceStates.entrySet());
         localNode.updateModuleGroupStates(remoteModuleGroupStates);
-        //TODO 同步remoteAdditions信息
-        localNode.overWriteAllModuleHttpAddress(remoteNodePB.getLegionModuleGroupHttpMap());
-        localNode.overWriteAllModuleHttpVersion(remoteNodePB.getLegionModuleGroupRouteVersionMap());
     }
 
-    public long getFirstSynSendAt() {
-        return firstSynSendAt;
-    }
-
-    int getMaxLegionNodeStateVersion(LegionNodeInfo legionNode) {
+    private int getMaxLegionNodeStateVersion(LegionNodeInfo legionNode) {
         int maxVersion = legionNode.getHbState().getHeartBeatVersion();
         return maxVersion;
     }
@@ -313,7 +306,7 @@ public class GossipController {
                                 if (log.isDebugEnabled())
                                     log.debug("send GOSSIP_INIT to legion node {} success", peer.getNetInfo());
                             } else {
-                                EventBus.getInstance().pushEvent(ClusterEvent.MAKE_PENDING, peer);
+                                EventBus.pushEvent(ClusterEvent.MAKE_PENDING, peer);
 //                                            EventBus.getInstance().pushEvent(ClusterEvent.MAKE_REMOVE, nodeInfo);//FailureDetector不可用时的强制方法
                                 log.warn("send GOSSIP_INIT to legion node {} failed due to unreachable, mark it pending", peer.getNetInfo());
                             }
@@ -342,7 +335,7 @@ public class GossipController {
                         log.debug("time is expiring for LegionNode : {} ({})", legionNode, expireTime);
                     }
                     //Fire event to remove Node
-                    EventBus.getInstance().pushEvent(ClusterEvent.MAKE_REMOVE, legionNode);
+                    EventBus.pushEvent(ClusterEvent.MAKE_REMOVE, legionNode);
                     justRemovedLegionNode.put(legionNode.getNetInfo(), System.currentTimeMillis());
                     context.removeExpireTimeForLegionNode(legionNode.getNetInfo());
                 }
@@ -361,10 +354,10 @@ public class GossipController {
         //Module hb validation check
         if (context.getSelfInfo().getModuleGroupStates() != null && context.getSelfInfo().getModuleGroupStates().size() > 0) {
             List<String> removeList = context.getSelfInfo().getModuleGroupStates().entrySet().stream()
-                    .filter(e -> (now - e.getValue()) > LegionConstants.MODULE_GROUP_TIMEOUT_MS)
+                    .filter(e -> (now - e.getValue().getState()) > LegionConstants.MODULE_GROUP_TIMEOUT_MS)
                     .peek(e -> {
                         log.warn("remove group id[{}], dmlTime[{}]",
-                                e.getKey(), DateFormatUtils.format(e.getValue(), "yyyy-MM-dd HH:mm:ss"));
+                                e.getKey(), DateFormatUtils.format(e.getValue().getState(), "yyyy-MM-dd HH:mm:ss"));
                     })
                     .map(e -> e.getKey())
                     .collect(Collectors.toList());

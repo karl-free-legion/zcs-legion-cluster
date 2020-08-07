@@ -4,6 +4,7 @@ import com.google.protobuf.Any;
 import com.google.protobuf.Message;
 import com.legion.common.utils.CommonUtils;
 import com.legion.core.LegionGlobalConstant;
+import com.legion.core.api.Gossip;
 import com.legion.core.api.HttpRoute;
 import com.legion.core.api.X;
 import com.legion.net.common.util.GossipUtils;
@@ -36,15 +37,14 @@ public class RequireModuleHttpInfoHandler extends AbstractMessageHandler {
 
     @Override
     public boolean doHandler(X.XMessage message, ChannelHandlerContext channelHandlerContext) {
-        boolean result = false;
         try {
             Optional<? extends Message> httpRouteReq = Optional.of(Any.parseFrom(message.getBody()).unpack(HttpRoute.HttpRouteReq.class));
-            result = httpRouteReq.isPresent();
             httpRouteReq.ifPresent(m -> handleRouteReq(m, message, channelHandlerContext.channel()));
+            return true;
         } catch (Throwable e) {
             log.error("module ACQUIRE ROUTE message handler failed. {}", message.getHeader(), e);
         }
-        return result;
+        return false;
     }
 
     private void handleRouteReq(Message httpRouteReq, X.XMessage message, Channel channel) {
@@ -71,19 +71,21 @@ public class RequireModuleHttpInfoHandler extends AbstractMessageHandler {
         LegionNodeContext.context().getClusterNodes().values().stream()
                 .map(ln -> {
                     List<HttpRoute.GroupCluster.Builder> groupClusters = new ArrayList<>();
-                    ln.getLegionGroupModuleHttp().entrySet().stream().filter(e ->
+                    ln.getModuleGroupStates().entrySet().stream()
+                            .filter(e -> StringUtils.isNotBlank(e.getValue().getHttpInfo()))
+                            .filter(e ->
                             (LegionGlobalConstant.ACQUIRE_ALL_HTTP_ROUTE.equals(targetGroupId)
                                     || GossipUtils.matchGroup(e.getKey(), targetGroupId))
                     ).forEach(e -> {
                         HttpRoute.GroupCluster.Builder groupCluster = HttpRoute.GroupCluster.newBuilder();
-                        HttpRoute.ModuleInfo.Builder moduleInfo = HttpRoute.ModuleInfo.newBuilder();
+                        Gossip.ModuleInfo.Builder moduleInfo = Gossip.ModuleInfo.newBuilder();
                         final String[] temp = GossipUtils.deSerializeGroupModule(e.getKey());
                         if (temp != null && temp.length > 1) {
                             moduleInfo.setModuleId(temp[1]);
-                            moduleInfo.setHttpInfo(e.getValue());
+                            moduleInfo.setHttpInfo(e.getValue().getHttpInfo());
                             groupCluster.addModuleInfo(moduleInfo);
                             groupCluster.setGroupId(temp[0]);
-                            String routeVersion = ln.getLegionGroupModuleHttp().get(GossipUtils.serializeGroupModule(groupCluster.getGroupId(), moduleInfo.getModuleId()));
+                            String routeVersion = e.getValue().getRouteVersion();
                             if(StringUtils.isBlank(routeVersion)) {
                                 moduleInfo.setRouteVersion(LegionGlobalConstant.DEFAULT_ROUTE_VERSION);
                             }else {
@@ -96,7 +98,7 @@ public class RequireModuleHttpInfoHandler extends AbstractMessageHandler {
                     return groupClusters;
                 })
                 .flatMap(Collection::stream)
-                .filter(CommonUtils.distinctByKey(t -> t.getGroupId()))
+                .filter(CommonUtils.distinctByKey(HttpRoute.GroupCluster.Builder::getGroupId))
                 .forEach(rplBody::addGroupInfo);
 
 

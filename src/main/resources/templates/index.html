@@ -80,29 +80,9 @@
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item" th:each="instance : ${selfInfo.legionModuleGroupState}">
                                 <span th:text="${instance.key}"></span> =
-                                <span th:text="${instance.value}"></span>
-                            </li>
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-success">ModuleGroupRoute</td>
-                    <td>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item" th:each="instance : ${selfInfo.legionGroupModuleHttp}">
-                                <span th:text="${instance.key}"></span> =
-                                <span th:text="${instance.value}"></span>
-                            </li>
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-success">ModuleGroupVersion</td>
-                    <td>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item" th:each="instance : ${selfInfo.legionGroupModuleVersion}">
-                                <span th:text="${instance.key}"></span> =
-                                <span th:text="${instance.value}"></span>
+                                【<span th:text="${instance.value.httpInfo}"></span>,
+                                <span th:text="${instance.value.routeVersion}"></span>,
+                                <span th:text="${instance.value.state}"></span>】
                             </li>
                         </ul>
                     </td>
@@ -190,29 +170,9 @@
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item" th:each="instance : ${cluster.legionModuleGroupState}">
                                 <span th:text="${instance.key}"></span> =
-                                <span th:text="${instance.value}"></span>
-                            </li>
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-success">ModuleGroupRoute</td>
-                    <td>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item" th:each="instance : ${cluster.legionGroupModuleHttp}">
-                                <span th:text="${instance.key}"></span> =
-                                <span th:text="${instance.value}"></span>
-                            </li>
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-success">ModuleGroupVersion</td>
-                    <td>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item" th:each="instance : ${cluster.legionGroupModuleVersion}">
-                                <span th:text="${instance.key}"></span> =
-                                <span th:text="${instance.value}"></span>
+                                【<span th:text="${instance.value.httpInfo}"></span>,
+                                <span th:text="${instance.value.routeVersion}"></span>,
+                                <span th:text="${instance.value.state}"></span>】
                             </li>
                         </ul>
                     </td>
