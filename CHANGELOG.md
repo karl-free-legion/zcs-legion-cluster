@@ -1,3 +1,8 @@
+## 2.6.21 (2020-8-13)
+
+BugFixes:
+   - 修复发送概率性失败的问题   
+
 ## 2.6.20 (2020-8-12)
 
 Features:
@@ -5,7 +10,6 @@ Features:
    - X.message里添加routeversion信息用于后续灰度
    - simpleMessage的发送逻辑里加入根据ruoteVersion进行分流（灰度发布）
    - legion message 可灰度测试
-   
    
 ## 2.6.19 (2020-7-29)
 
