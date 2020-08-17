@@ -78,7 +78,7 @@
                     <td class="table-success">ModuleGroupState</td>
                     <td>
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item" th:each="instance : ${selfInfo.legionModuleGroupState}">
+                            <li class="list-group-item" th:each="instance : ${selfInfo.getModuleGroupStates()}">
                                 <span th:text="${instance.key}"></span> =
                                 【<span th:text="${instance.value.httpInfo}"></span>,
                                 <span th:text="${instance.value.routeVersion}"></span>,
@@ -168,7 +168,7 @@
                     <td class="table-success">ModuleGroupState</td>
                     <td>
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item" th:each="instance : ${cluster.legionModuleGroupState}">
+                            <li class="list-group-item" th:each="instance : ${cluster.getModuleGroupStates()}">
                                 <span th:text="${instance.key}"></span> =
                                 【<span th:text="${instance.value.httpInfo}"></span>,
                                 <span th:text="${instance.value.routeVersion}"></span>,

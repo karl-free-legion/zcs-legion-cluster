@@ -5,7 +5,6 @@ import com.legion.net.common.exceptions.LegionNetException;
 import com.legion.net.entities.LegionChannelGroup;
 import com.legion.net.entities.LegionNodeContext;
 import com.legion.net.entities.LegionNodeInfo;
-import com.legion.net.entities.SyncModuleInfo;
 import com.legion.net.netty.server.message.NodeMessageProcess;
 import com.legion.net.netty.transport.LegionCourier;
 import io.netty.channel.Channel;
@@ -14,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -119,11 +117,15 @@ public abstract class AbstractMessageHandler implements NodeMessageProcess {
         LegionNodeContext context = LegionNodeContext.context();
         LegionChannelGroup channelGroup = context.getChannelGroup();
         LegionNodeInfo selfInfo = context.getSelfInfo();
-        List<SyncModuleInfo> matchModules = context.getSelfInfo().getVersionMatchedModule(groupId, routeVersion);
+//        List<SyncModuleInfo> matchModules = context.getSelfInfo().getVersionMatchedModule(groupId, routeVersion);
 
         //随机方式送到目标
-        List<Channel> sendTarget = channelGroup.getOneRowSelected(groupId, matchModules).stream().filter(Objects::nonNull).collect(Collectors.toList());
+        List<Channel> sendTarget = channelGroup.getOneRow(groupId).stream().filter(channel -> channel != null).collect(Collectors.toList());
+//        List<Channel> sendTarget = channelGroup.getOneRowSelected(groupId, matchModules).stream().filter(channel -> channel != null).collect(Collectors.toList());
         Collections.shuffle(sendTarget);
+
+//        log.warn("msg[v={}] target M [{}] channel size = {}", routeVersion, matchModules, sendTarget);
+
         for (Channel channel : sendTarget) {
             try {
                 LegionCourier.instance().sendModule(message, message.getHeader().getMsgType(), channel);
@@ -141,7 +143,8 @@ public abstract class AbstractMessageHandler implements NodeMessageProcess {
                     .stream()
                     .filter(legionNodeInfo -> legionNodeInfo.getNetInfo().compareTo(selfInfo.getNetInfo()) != 0)
                     .filter(LegionNodeInfo::isAlive)
-                    .filter(n -> n.matchGroupVersion(n, groupId, routeVersion))
+                    .filter(n -> n.matchGroup(groupId))
+//                    .filter(n -> n.matchGroupVersion(groupId, routeVersion))
                     .collect(Collectors.toList());
             for (LegionNodeInfo node : forwardTarget) {
                 try {
