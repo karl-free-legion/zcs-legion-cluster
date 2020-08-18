@@ -5,6 +5,7 @@ import com.legion.net.common.exceptions.LegionNetException;
 import com.legion.net.entities.LegionChannelGroup;
 import com.legion.net.entities.LegionNodeContext;
 import com.legion.net.entities.LegionNodeInfo;
+import com.legion.net.entities.SyncModuleInfo;
 import com.legion.net.netty.server.message.NodeMessageProcess;
 import com.legion.net.netty.transport.LegionCourier;
 import io.netty.channel.Channel;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public abstract class AbstractMessageHandler implements NodeMessageProcess {
 
-    final MessageFunnel messageFunnel = new MessageFunnel(this::finalHandler);
+    private final MessageFunnel messageFunnel = new MessageFunnel(this::finalHandler);
 
     @Override
     public boolean process(X.XMessage message, ChannelHandlerContext channelHandlerContext) {
@@ -117,13 +118,11 @@ public abstract class AbstractMessageHandler implements NodeMessageProcess {
         LegionNodeContext context = LegionNodeContext.context();
         LegionChannelGroup channelGroup = context.getChannelGroup();
         LegionNodeInfo selfInfo = context.getSelfInfo();
-//        List<SyncModuleInfo> matchModules = context.getSelfInfo().getVersionMatchedModule(groupId, routeVersion);
+        List<SyncModuleInfo> matchModules = context.getSelfInfo().getVersionMatchedModule(groupId, routeVersion);
 
         //随机方式送到目标
-        List<Channel> sendTarget = channelGroup.getOneRow(groupId).stream().filter(channel -> channel != null).collect(Collectors.toList());
-//        List<Channel> sendTarget = channelGroup.getOneRowSelected(groupId, matchModules).stream().filter(channel -> channel != null).collect(Collectors.toList());
+        List<Channel> sendTarget = channelGroup.getOneRowSelected(groupId, matchModules).stream().filter(channel -> channel != null).collect(Collectors.toList());
         Collections.shuffle(sendTarget);
-
 //        log.warn("msg[v={}] target M [{}] channel size = {}", routeVersion, matchModules, sendTarget);
 
         for (Channel channel : sendTarget) {
@@ -143,12 +142,12 @@ public abstract class AbstractMessageHandler implements NodeMessageProcess {
                     .stream()
                     .filter(legionNodeInfo -> legionNodeInfo.getNetInfo().compareTo(selfInfo.getNetInfo()) != 0)
                     .filter(LegionNodeInfo::isAlive)
-                    .filter(n -> n.matchGroup(groupId))
-//                    .filter(n -> n.matchGroupVersion(groupId, routeVersion))
+                    .filter(n -> n.matchGroupVersion(groupId, routeVersion))
                     .collect(Collectors.toList());
             for (LegionNodeInfo node : forwardTarget) {
                 try {
                     LegionCourier.instance().sendNodeForward(message, message.getHeader().getMsgType(), node.getNetInfo());
+                    log.info("forward message[from={},gid={},v={}] to Node[{}] complete", message.getHeader().getModuleSource(), groupId, routeVersion, node.getNetInfo());
                     return true;
                 } catch (Exception e) {
                     log.warn("forward message[from={},gid={},v={}] to Node[{}] Failed", message.getHeader().getModuleSource(), groupId, routeVersion, node.getNetInfo(), e);

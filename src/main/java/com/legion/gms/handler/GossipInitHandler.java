@@ -58,6 +58,10 @@ public class GossipInitHandler extends GossipHandler<Gossip.GossipInit> {
                     .forEach(myNode -> gossipInit.getSelfNodeListList().add(myNode.toGossipNodeInfoLight()));
         }
         for (Gossip.NodeInfoLight remoteNode : gossipInit.getSelfNodeListList()) {
+            if (remoteNode.getNodeId().equals(legionContext.getSelfInfo().getNodeId())) {
+                //修复BUG，不做自己节点信息的外部同步 2020-8-18
+                continue;
+            }
             LegionNodeInfo localNode = legionContext.getNodeInfoById(remoteNode.getNodeId());
             if (localNode != null) {
                 long remoteGen = remoteNode.getGeneration();
