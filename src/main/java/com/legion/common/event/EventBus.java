@@ -12,7 +12,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -69,7 +68,7 @@ public class EventBus {
     }
 
 
-    public void register(@NotNull Object finder) {
+    public void register(Object finder) {
         Arrays.stream(finder.getClass().getMethods())
                 .filter(m -> m.getAnnotation(Subscriber.class) != null)
                 .peek(m -> log.info("method name:{}", m.getName()))
