@@ -1,5 +1,6 @@
 package com.legion.node.handler;
 
+import com.legion.core.LegionGlobalConstant;
 import com.legion.core.api.X;
 import com.legion.core.utils.RequestURI;
 import com.legion.net.entities.LegionChannelGroup;
@@ -10,6 +11,7 @@ import com.legion.net.netty.transport.LegionCourier;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +44,7 @@ public class SimpleSendMessageHandler extends AbstractMessageHandler {
     }
 
     public boolean route(X.XMessage message, final String groupId) {
-        final String routeVersion = message.getHeader().getRouteVersion();
+        String routeVersion = StringUtils.isBlank(message.getHeader().getRouteVersion()) ? LegionGlobalConstant.DEFAULT_ROUTE_VERSION : message.getHeader().getRouteVersion();
         LegionNodeContext context = context();
         LegionChannelGroup channelGroup = context.getChannelGroup();
         LegionNodeInfo selfInfo = context.getSelfInfo();
