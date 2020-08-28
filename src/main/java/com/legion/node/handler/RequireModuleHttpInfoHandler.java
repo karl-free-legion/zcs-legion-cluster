@@ -2,7 +2,6 @@ package com.legion.node.handler;
 
 import com.google.protobuf.Any;
 import com.google.protobuf.Message;
-import com.legion.common.utils.CommonUtils;
 import com.legion.core.LegionGlobalConstant;
 import com.legion.core.api.Gossip;
 import com.legion.core.api.HttpRoute;
@@ -10,6 +9,7 @@ import com.legion.core.api.X;
 import com.legion.net.common.util.GossipUtils;
 import com.legion.net.entities.LegionNodeContext;
 import com.legion.net.entities.LegionNodeInfo;
+import com.legion.net.entities.SyncModuleInfo;
 import com.legion.net.netty.transport.LegionCourier;
 import com.legion.net.netty.transport.SentResultEntity;
 import io.netty.channel.Channel;
@@ -18,10 +18,7 @@ import io.netty.util.concurrent.Promise;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 /**
@@ -66,43 +63,40 @@ public class RequireModuleHttpInfoHandler extends AbstractMessageHandler {
                         .setPort(selfInfo.getPort())
                         .build())
                 .build());
-
-        //路由信息组装
-        LegionNodeContext.context().getClusterNodes().values().stream()
-                .map(ln -> {
-                    List<HttpRoute.GroupCluster.Builder> groupClusters = new ArrayList<>();
-                    ln.getModuleGroupStates().entrySet().stream()
-                            .filter(e -> StringUtils.isNotBlank(e.getValue().getHttpInfo()))
-                            .filter(e ->
-                            (LegionGlobalConstant.ACQUIRE_ALL_HTTP_ROUTE.equals(targetGroupId)
-                                    || GossipUtils.matchGroup(e.getKey(), targetGroupId))
-                    ).forEach(e -> {
-                        HttpRoute.GroupCluster.Builder groupCluster = HttpRoute.GroupCluster.newBuilder();
-                        Gossip.ModuleInfo.Builder moduleInfo = Gossip.ModuleInfo.newBuilder();
-                        final String[] temp = GossipUtils.deSerializeGroupModule(e.getKey());
-                        if (temp != null && temp.length > 1) {
-                            moduleInfo.setModuleId(temp[1]);
-                            moduleInfo.setHttpInfo(e.getValue().getHttpInfo());
-
-                            String routeVersion = e.getValue().getRouteVersion();
-                            if(StringUtils.isBlank(routeVersion)) {
-                                moduleInfo.setRouteVersion(LegionGlobalConstant.DEFAULT_ROUTE_VERSION);
-                            }else {
-                                moduleInfo.setRouteVersion(routeVersion);
+        //路由信息过滤
+        final Map<String, Set<SyncModuleInfo>> wholeSets = new HashMap<>();
+        LegionNodeContext.context().getClusterNodes().values().forEach(ln ->
+                ln.getModuleGroupStates().entrySet().stream()
+                        .filter(e -> StringUtils.isNotBlank(e.getValue().getHttpInfo()))
+                        .filter(e ->
+                                (LegionGlobalConstant.ACQUIRE_ALL_HTTP_ROUTE.equals(targetGroupId)
+                                        || GossipUtils.matchGroup(e.getKey(), targetGroupId)))
+                        .forEachOrdered(e -> {
+                            final String[] temp = GossipUtils.deSerializeGroupModule(e.getKey());
+                            if (temp != null && temp.length > 1) {
+                                Set<SyncModuleInfo> ms = wholeSets.getOrDefault(temp[0], new HashSet<>());
+                                ms.add(e.getValue());
+                                wholeSets.putIfAbsent(temp[0], ms);
                             }
-                            groupCluster.setGroupId(temp[0]);
-                            groupCluster.addModuleInfo(moduleInfo);
-                        }
-                        groupClusters.add(groupCluster);
-                    }
-                    );
-                    return groupClusters;
-                })
-                .flatMap(Collection::stream)
-                .filter(CommonUtils.distinctByKey(HttpRoute.GroupCluster.Builder::getGroupId))
-                .forEach(rplBody::addGroupInfo);
-
-
+                        }));
+        wholeSets.entrySet().stream().filter(e -> e.getValue() != null && e.getValue().size() > 0).forEach(e -> {
+//            log.info("available gid={}, ms[{}]", key, value.stream().map(SyncModuleInfo::toString).collect(Collectors.joining("],[")));
+            HttpRoute.GroupCluster.Builder groupCluster = HttpRoute.GroupCluster.newBuilder();
+            Gossip.ModuleInfo.Builder moduleInfo = Gossip.ModuleInfo.newBuilder();
+            e.getValue().forEach(m -> {
+                moduleInfo.setModuleId(m.getModuleId());
+                moduleInfo.setHttpInfo(m.getHttpInfo());
+                String routeVersion = m.getRouteVersion();
+                if (StringUtils.isBlank(routeVersion)) {
+                    moduleInfo.setRouteVersion(LegionGlobalConstant.DEFAULT_ROUTE_VERSION);
+                } else {
+                    moduleInfo.setRouteVersion(routeVersion);
+                }
+                groupCluster.addModuleInfo(moduleInfo);
+            });
+            groupCluster.setGroupId(e.getKey());
+            rplBody.addGroupInfo(groupCluster);
+        });
         //回复发送
         rpl.setBody(Any.pack(rplBody.build()).toByteString());
         Promise<SentResultEntity> result = LegionCourier.instance().sendModule(rpl.build(), X.XMessageType.ACQUIRE_ROUTE, channel);

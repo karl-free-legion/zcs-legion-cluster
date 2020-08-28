@@ -1,4 +1,4 @@
-num: 3
+num: 9
 
 spring:
   application:
@@ -15,9 +15,10 @@ legion:
       intervalInMillis: 1000
       phiConvictThreshold: 8
   cluster:
-    - host: 172.16.1.64
-      port: 18001
-
+    #     host: 172.16.1.64
+    #     port: 18001
+    host: 172.16.211.169
+    port: 9003
 logging:
   path: logs
   file: legion-cluster
