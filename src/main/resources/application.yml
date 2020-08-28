@@ -9,13 +9,13 @@ server:
 # server
 legion:
   server:
-    host: 172.80.80.90
+    host: 172.16.1.64
     port: 1800${num}
     detector:
       intervalInMillis: 1000
       phiConvictThreshold: 8
   cluster:
-    - host: 172.80.80.90
+    - host: 172.16.1.64
       port: 18001
 
 logging:

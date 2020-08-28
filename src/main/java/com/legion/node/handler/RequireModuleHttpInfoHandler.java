@@ -83,14 +83,15 @@ public class RequireModuleHttpInfoHandler extends AbstractMessageHandler {
                         if (temp != null && temp.length > 1) {
                             moduleInfo.setModuleId(temp[1]);
                             moduleInfo.setHttpInfo(e.getValue().getHttpInfo());
-                            groupCluster.addModuleInfo(moduleInfo);
-                            groupCluster.setGroupId(temp[0]);
+
                             String routeVersion = e.getValue().getRouteVersion();
                             if(StringUtils.isBlank(routeVersion)) {
                                 moduleInfo.setRouteVersion(LegionGlobalConstant.DEFAULT_ROUTE_VERSION);
                             }else {
                                 moduleInfo.setRouteVersion(routeVersion);
                             }
+                            groupCluster.setGroupId(temp[0]);
+                            groupCluster.addModuleInfo(moduleInfo);
                         }
                         groupClusters.add(groupCluster);
                     }
