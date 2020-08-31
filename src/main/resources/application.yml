@@ -1,4 +1,4 @@
-num: 9
+num: 3
 
 spring:
   application:
@@ -17,8 +17,9 @@ legion:
   cluster:
     #     host: 172.16.1.64
     #     port: 18001
-    host: 172.16.211.169
-    port: 9003
+    #  cluster 是 Array， 不要抬杠
+    - host: 172.16.1.64
+      port: 22101
 logging:
   path: logs
   file: legion-cluster
