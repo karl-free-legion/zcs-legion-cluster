@@ -1,8 +1,11 @@
 package com.legion.common.utils;
 
+import com.legion.core.utils.Digest;
+import com.legion.net.entities.SyncModuleInfo;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -33,5 +36,32 @@ public class RetryUtilsTest {
         String result = RetryUtils.retry(() -> {
             throw new Exception();
         }, new IOException(), "error occurs");
+    }
+
+
+    @Test
+    public void versionTest() {
+        List<SyncModuleInfo> groupMatchList = new ArrayList<>();
+        String targetVersion = "v5.0.0";
+        groupMatchList.add(new SyncModuleInfo("sdzw", "http:/1", "v0.0.0"));
+        groupMatchList.add(new SyncModuleInfo("sdzw", "http:/4", "v4.0.0"));
+//        long id = System.currentTimeMillis();
+
+        Digest.findMatchVersionGroup(groupMatchList, SyncModuleInfo::getRouteVersion, targetVersion)
+                .forEach(s -> System.out.println("M : " + s.toString()));
+
+    }
+
+    @Test
+    public void versionTest1() {
+        List<SyncModuleInfo> groupMatchList = new ArrayList<>();
+        String targetVersion = "v0.0.0";
+//        groupMatchList.add(new SyncModuleInfo("sdzw","http:/1","v0.0.0"));
+        groupMatchList.add(new SyncModuleInfo("sdzw", "http:/4", "v4.0.0"));
+//        long id = System.currentTimeMillis();
+
+        Digest.findMatchVersionGroup(groupMatchList, SyncModuleInfo::getRouteVersion, targetVersion)
+                .forEach(s -> System.out.println("M : " + s.toString()));
+
     }
 }

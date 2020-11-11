@@ -1,3 +1,8 @@
+## 2.6.80 (2020-11-11)
+
+BugFixes:
+   - 修改版本号的对饮模式为精准匹配（targetVersion==routeVersion）
+
 ## 2.6.27 (2020-8-28)
 
 Features:

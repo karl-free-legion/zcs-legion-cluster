@@ -61,7 +61,6 @@ public class SimpleSendMessageHandler extends AbstractMessageHandler {
                 log.warn("send message[from={},gid={},v={}] to Module[{},{}] failed", message.getHeader().getModuleSource(), groupId, routeVersion, channel.isActive(), channel.isWritable());
             }
         }
-//        log.debug("send message[from={},{},gid={},v={}] need to forward", message.getHeader().getModuleSource().getGroupId(), message.getHeader().getModuleSource().getModuleId(), groupId, message.getHeader().getRouteVersion());
         //本节点无直达路径，转发
         if (!message.getHeader().hasNodeSource()) {
             //修复legion转发时, 排除自己
@@ -76,7 +75,6 @@ public class SimpleSendMessageHandler extends AbstractMessageHandler {
             for (LegionNodeInfo node : forwardTarget) {
                 try {
                     LegionCourier.instance().sendNodeForward(message, message.getHeader().getMsgType(), node.getNetInfo());
-//                    log.debug("forward message[from={},{},gid={},v={}] to Node[{}] complete", message.getHeader().getModuleSource().getGroupId(), message.getHeader().getModuleSource().getModuleId(), groupId, routeVersion, node.getNetInfo());
                     return true;
                 } catch (Exception e) {
                     log.warn("forward message[from={},gid={},v={}] to Node[{}] Failed", message.getHeader().getModuleSource(), groupId, routeVersion, node.getNetInfo(), e);
